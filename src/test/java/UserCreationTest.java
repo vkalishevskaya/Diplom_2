@@ -1,5 +1,6 @@
 import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
+import io.restassured.response.Response;
 import io.restassured.response.ValidatableResponse;
 import org.example.UserAssertions;
 import org.example.UserClient;
@@ -29,7 +30,7 @@ public class UserCreationTest {
     @Description("checking status-code")
     public void userCreate() {
         var user = generator.random();
-        ValidatableResponse creationResponse = client.createUser(user);
+        Response creationResponse = client.createUser(user);
         check.createdSuccessfully(creationResponse);
     }
 
@@ -38,7 +39,7 @@ public class UserCreationTest {
     @Description("unable to create a new user with non-unique data")
     public void userRepeats(){
         var user = generator.generic();
-        ValidatableResponse creationResponse = client.createUser(user);
+        Response creationResponse = client.createUser(user);
         check.alreadyExists(creationResponse);
     }
 
@@ -47,7 +48,7 @@ public class UserCreationTest {
     @Description("creating is unable without password")
     public void creationFails() {
         var user = generator.noPassword();
-        ValidatableResponse loginResponse = client.createUser(user);
+        Response loginResponse = client.createUser(user);
         String message = check.creationFailed(loginResponse);
         assert !message.isBlank();
     }
@@ -57,7 +58,7 @@ public class UserCreationTest {
     @Description("unable to create a new user with non-unique login")
     public void loginAlreadyExists(){
         var user = generator.repeats();
-        ValidatableResponse creationResponse = client.createUser(user);
+        Response creationResponse = client.createUser(user);
         check.alreadyExists(creationResponse);
     }
 
@@ -66,7 +67,7 @@ public class UserCreationTest {
     @Description("creating is unable without email")
     public void creationWithoutLogin() {
         var user = generator.noEmail();
-        ValidatableResponse creationResponse = client.createUser(user);
+        Response creationResponse = client.createUser(user);
         check.creationFailed(creationResponse);
     }
 
@@ -75,8 +76,7 @@ public class UserCreationTest {
     @Description("creating is unable without name")
     public void creationWithoutName() {
         var user = generator.noName();
-        ValidatableResponse creationResponse = client.createUser(user);
+        Response creationResponse = client.createUser(user);
         check.creationFailed(creationResponse);
     }
 }
-

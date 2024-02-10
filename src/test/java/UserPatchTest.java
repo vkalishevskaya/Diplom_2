@@ -13,24 +13,22 @@ public class UserPatchTest {
     private final UserGenerator generator = new UserGenerator();
     private final UserClient client = new UserClient();
     private final UserAssertions check = new UserAssertions();
-    private String token;
+    private String accessToken;
 
 
-
-   @Test
+    @Test
     @DisplayName("Update user data")
     @Description("Creating new user and change they name and email")
     public void updateAuthorizedUser(){
         var user = generator.random();
-        ValidatableResponse creationResponse = client.createUser(user);
+        Response creationResponse = client.createUser(user);
         check.createdSuccessfully(creationResponse);
+        this.accessToken = creationResponse.path("accessToken");
 
-        Credentials creds = Credentials.from(user);
         var newUser = generator.newCredentials();
-        Credentials token = Credentials.from(user);
-        ValidatableResponse updateResponse = client.updateUser(user, token);
-        check.patchedSuccessfully(updateResponse);
-
+        Credentials newCreds = Credentials.from(newUser);
+        Response updationResponse = client.updateUser(newCreds, accessToken);
+        check.patchedSuccessfully(updationResponse);
     }
 }
 

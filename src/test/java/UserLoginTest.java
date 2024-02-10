@@ -1,11 +1,10 @@
 import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
-import io.restassured.response.ValidatableResponse;
+import io.restassured.response.Response;
 import org.example.Credentials;
 import org.example.UserAssertions;
 import org.example.UserClient;
 import org.example.UserGenerator;
-import org.junit.After;
 import org.junit.Test;
 import java.util.Map;
 
@@ -29,11 +28,11 @@ public class UserLoginTest {
     @Description("Creating new user and login with data")
     public void userLogin() {
         var user = generator.random();
-        ValidatableResponse creationResponse = client.createUser(user);
+        Response creationResponse = client.createUser(user);
         check.createdSuccessfully(creationResponse);
 
         Credentials creds = Credentials.from(user);
-        ValidatableResponse loginResponse = client.login(creds);
+        Response loginResponse = client.login(creds);
         check.loggedInSuccessfully(loginResponse);
     }
 
@@ -43,7 +42,7 @@ public class UserLoginTest {
     public void incorrectPassword() {
         var user = generator.repeats();
         Credentials creds = Credentials.from(user);
-        ValidatableResponse loginResponse = client.login(creds);
+        Response loginResponse = client.login(creds);
         check.notFound(loginResponse);
     }
 
@@ -51,7 +50,7 @@ public class UserLoginTest {
     @DisplayName("login fails response")
     @Description("Login without email")
     public void loginFails() {
-        ValidatableResponse loginResponse = client.login(Map.of("password", "null"));
+        Response loginResponse = client.login(Map.of("password", "null"));
         check.notFound(loginResponse);
     }
 
@@ -59,7 +58,7 @@ public class UserLoginTest {
     @DisplayName("login without password field")
     @Description("Login without password")
     public void loginWithoutPassword() {
-        ValidatableResponse loginResponse = client.login(Map.of("email", "email"));
+        Response loginResponse = client.login(Map.of("email", "email"));
         check.notFound(loginResponse);
     }
 
@@ -70,7 +69,7 @@ public class UserLoginTest {
     public void userNotExist(){
         var user = generator.notExist();
         Credentials creds = Credentials.from(user);
-        ValidatableResponse loginResponse = client.login(creds);
+        Response loginResponse = client.login(creds);
         check.notFound(loginResponse);
     }
 }

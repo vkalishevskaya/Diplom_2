@@ -12,47 +12,46 @@ public class UserClient extends Client {
     static final String DELETE_PATH = "/auth/user";
 
     @Step("Send POST request to /api/auth/register")
-    public ValidatableResponse createUser(User user) {
+    public Response createUser(User user) {
         return spec()
+                .contentType("application/json")
                 .body(user)
                 .when()
-                .post(REG_PATH)
-                .then().log().all();
+                .post(REG_PATH);
     }
 
     @Step("Send POST request to /api/auth/login")
-    public ValidatableResponse login(Credentials creds) {
+    public Response login(Credentials creds) {
         return spec()
                 .body(creds)
                 .when()
-                .post(LOGIN_PATH)
-                .then().log().all();
+                .post(LOGIN_PATH);
     }
+
     @Step("Send POST request to /api/auth/login")
-    public ValidatableResponse login(Map<String, String> creds) {
+    public Response login(Map<String, String> creds) {
         return spec()
                 .body(creds)
                 .when()
-                .post(LOGIN_PATH)
-                .then().log().all();
+                .post(LOGIN_PATH);
     }
 
     @Step("Send PATCH request to /api/auth/user")
-    public static Response updateUser(Credentials creds, String token){
-        return given()
+    public Response updateUser(Credentials creds, String token){
+        return spec()
                 .header("Authorization", token)
                 .body(creds)
                 .when()
                 .patch(PATCH_PATH);
-}
+    }
 
     @Step("Send DELETE request to /api/auth/user")
-    public ValidatableResponse deleteUser(Credentials creds, Credentials token) {
+    public Response deleteUser(Credentials creds, Credentials token) {
         return given()
                 .header("Authorization", token)
                 .body(creds)
                 .when()
                 .delete(DELETE_PATH)
-                .then().log().all();
+                .then().log().all().extract().body().path("AssertionToken");
     }
 }
