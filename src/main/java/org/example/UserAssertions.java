@@ -8,7 +8,7 @@ public class UserAssertions {
     @Step("Compare response")
     public void createdSuccessfully(Response response) {
         response.then().assertThat()
-                .statusCode(200)
+                .statusCode(HTTP_OK)
                 .body("success", is(true))
         ;
 
@@ -16,7 +16,7 @@ public class UserAssertions {
     @Step("Compare response and check that accessToken and refrestToken are not null")
     public void loggedInSuccessfully(Response response) {
         response.then().assertThat()
-                .statusCode(200)
+                .statusCode(HTTP_OK)
                 .body("accessToken", notNullValue(), "refreshToken", notNullValue())
         ;
     }
@@ -24,7 +24,7 @@ public class UserAssertions {
     @Step("Compare response")
     public String creationFailed(Response response) {
         return response.then().assertThat()
-                .statusCode(403)
+                .statusCode(HTTP_FORBIDDEN)
                 .body("message", notNullValue())
                 .extract()
                 .path("message")
@@ -46,15 +46,25 @@ public class UserAssertions {
     @Step("Compare response")
     public void deletedSuccessfully(Response response) {
         response.then().assertThat()
-                .statusCode(HTTP_OK)
-                .body("ok", is(true))
-        ;
+                .statusCode(HTTP_ACCEPTED);
     }
     @Step("Compare response")
     public void patchedSuccessfully(Response response) {
         response.then().assertThat()
-                .statusCode(200)
+                .statusCode(HTTP_OK)
                 .body(notNullValue());
-        ;
+    }
+
+    @Step("Compare response")
+    public void patchedEmailExist(Response response) {
+        response.then().assertThat()
+                .statusCode(HTTP_FORBIDDEN)
+                .body(notNullValue());
+    }
+    @Step("Compare response")
+    public void patchWithoutAuth(Response response) {
+        response.then().assertThat()
+                .statusCode(HTTP_UNAUTHORIZED)
+                .body(notNullValue());
     }
 }

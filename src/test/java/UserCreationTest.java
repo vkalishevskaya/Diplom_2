@@ -1,29 +1,27 @@
 import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.Response;
-import io.restassured.response.ValidatableResponse;
 import org.example.UserAssertions;
 import org.example.UserClient;
 import org.example.UserGenerator;
 import org.junit.After;
 import org.junit.Test;
 
-import static org.hamcrest.Matchers.notNullValue;
-
 public class UserCreationTest {
     private final UserGenerator generator = new UserGenerator();
     private final UserClient client = new UserClient();
     private final UserAssertions check = new UserAssertions();
 
-    private String accessToken;  // default value
+    private String accessToken;
 
-    /*@After
-    public void deleteUser() {
-        if (accessToken) {
-            ValidatableResponse response = client.deleteUser(accessToken);
+    @After
+    public void deleteCourier() {
+        if (accessToken!=null) {
+            Response response = client.deleteUser(accessToken);
             check.deletedSuccessfully(response);
         }
-    }*/
+    }
+
 
     @Test
     @DisplayName("create new user")
@@ -32,6 +30,7 @@ public class UserCreationTest {
         var user = generator.random();
         Response creationResponse = client.createUser(user);
         check.createdSuccessfully(creationResponse);
+        this.accessToken = creationResponse.path("accessToken");
     }
 
     @Test
@@ -41,6 +40,7 @@ public class UserCreationTest {
         var user = generator.generic();
         Response creationResponse = client.createUser(user);
         check.alreadyExists(creationResponse);
+        this.accessToken = creationResponse.path("accessToken");
     }
 
     @Test
@@ -48,8 +48,9 @@ public class UserCreationTest {
     @Description("creating is unable without password")
     public void creationFails() {
         var user = generator.noPassword();
-        Response loginResponse = client.createUser(user);
-        String message = check.creationFailed(loginResponse);
+        Response creationResponse = client.createUser(user);
+        String message = check.creationFailed(creationResponse);
+        this.accessToken = creationResponse.path("accessToken");
         assert !message.isBlank();
     }
 
@@ -60,6 +61,7 @@ public class UserCreationTest {
         var user = generator.repeats();
         Response creationResponse = client.createUser(user);
         check.alreadyExists(creationResponse);
+        this.accessToken = creationResponse.path("accessToken");
     }
 
     @Test
@@ -69,6 +71,7 @@ public class UserCreationTest {
         var user = generator.noEmail();
         Response creationResponse = client.createUser(user);
         check.creationFailed(creationResponse);
+        this.accessToken = creationResponse.path("accessToken");
     }
 
     @Test
@@ -78,5 +81,6 @@ public class UserCreationTest {
         var user = generator.noName();
         Response creationResponse = client.createUser(user);
         check.creationFailed(creationResponse);
+        this.accessToken = creationResponse.path("accessToken");
     }
 }

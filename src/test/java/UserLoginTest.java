@@ -5,23 +5,25 @@ import org.example.Credentials;
 import org.example.UserAssertions;
 import org.example.UserClient;
 import org.example.UserGenerator;
+import org.junit.After;
 import org.junit.Test;
 import java.util.Map;
+
 
 
 public class UserLoginTest {
     private final UserGenerator generator = new UserGenerator();
     private final UserClient client = new UserClient();
     private final UserAssertions check = new UserAssertions();
+    private String accessToken;
 
-
-    /*@After
-    public void deleteUser() {
-        if (userToken > 0) {
-            ValidatableResponse response = client.deleteUser(token);
+    @After
+    public void deleteCourier() {
+        if (accessToken!=null) {
+            Response response = client.deleteUser(accessToken);
             check.deletedSuccessfully(response);
         }
-    }*/
+    }
 
     @Test
     @DisplayName("successful login")
@@ -34,6 +36,7 @@ public class UserLoginTest {
         Credentials creds = Credentials.from(user);
         Response loginResponse = client.login(creds);
         check.loggedInSuccessfully(loginResponse);
+        this.accessToken = loginResponse.path("accessToken");
     }
 
     @Test
@@ -44,6 +47,7 @@ public class UserLoginTest {
         Credentials creds = Credentials.from(user);
         Response loginResponse = client.login(creds);
         check.notFound(loginResponse);
+        this.accessToken = loginResponse.path("accessToken");
     }
 
     @Test
@@ -52,6 +56,7 @@ public class UserLoginTest {
     public void loginFails() {
         Response loginResponse = client.login(Map.of("password", "null"));
         check.notFound(loginResponse);
+        this.accessToken = loginResponse.path("accessToken");
     }
 
     @Test
@@ -60,6 +65,7 @@ public class UserLoginTest {
     public void loginWithoutPassword() {
         Response loginResponse = client.login(Map.of("email", "email"));
         check.notFound(loginResponse);
+        this.accessToken = loginResponse.path("accessToken");
     }
 
 
@@ -71,5 +77,6 @@ public class UserLoginTest {
         Credentials creds = Credentials.from(user);
         Response loginResponse = client.login(creds);
         check.notFound(loginResponse);
+        this.accessToken = loginResponse.path("accessToken");
     }
 }

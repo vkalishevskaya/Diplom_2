@@ -37,21 +37,26 @@ public class UserClient extends Client {
     }
 
     @Step("Send PATCH request to /api/auth/user")
-    public Response updateUser(Credentials creds, String token){
+    public Response updateUser(User user, String token){
         return spec()
                 .header("Authorization", token)
-                .body(creds)
+                .body(user)
+                .when()
+                .patch(PATCH_PATH);
+    }
+    @Step("Send PATCH request to /api/auth/user")
+    public Response updateUnauthUser(User user){
+        return spec()
+                .body(user)
                 .when()
                 .patch(PATCH_PATH);
     }
 
     @Step("Send DELETE request to /api/auth/user")
-    public Response deleteUser(Credentials creds, Credentials token) {
-        return given()
+    public Response deleteUser(String token) {
+        return spec()
                 .header("Authorization", token)
-                .body(creds)
                 .when()
-                .delete(DELETE_PATH)
-                .then().log().all().extract().body().path("AssertionToken");
+                .delete(DELETE_PATH);
     }
 }

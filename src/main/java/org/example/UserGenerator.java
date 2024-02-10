@@ -19,6 +19,6 @@ public class UserGenerator {
     public User repeats() {return new User( "jack@sparrow.com", RandomStringUtils.randomAlphanumeric(10), "Sparrow");}
     @Step("Try to create unvalid user")
     public User notExist() { return new User(RandomStringUtils.randomAlphanumeric(10).toLowerCase(Locale.ROOT)+"@sparrow.com", RandomStringUtils.randomAlphanumeric(10), RandomStringUtils.randomAlphanumeric(10));}
-    @Step("Try to create unvalid user")
-    public User newCredentials() { return new User(RandomStringUtils.randomAlphanumeric(10).toLowerCase(Locale.ROOT)+"@sparrow.com", null, RandomStringUtils.randomAlphanumeric(10));}
+    @Step("Creating user with unique data")
+    public User newCredentials() { return new User(RandomStringUtils.randomAlphanumeric(10).toLowerCase(Locale.ROOT)+"@sparrow.com", RandomStringUtils.randomAlphanumeric(10), RandomStringUtils.randomAlphanumeric(10));}
 }
