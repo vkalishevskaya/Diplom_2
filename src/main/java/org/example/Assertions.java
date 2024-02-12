@@ -4,6 +4,7 @@ import io.restassured.response.Response;
 import static java.net.HttpURLConnection.*;
 import static org.hamcrest.Matchers.*;
 
+
 public class Assertions {
     @Step("Compare response")
     public void userCreatedSuccessfully(Response response) {
