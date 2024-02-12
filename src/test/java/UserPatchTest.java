@@ -1,21 +1,21 @@
 import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.Response;
-import org.example.UserAssertions;
+import org.example.Assertions;
 import org.example.UserClient;
 import org.example.UserGenerator;
 import org.junit.After;
 import org.junit.Test;
 
 public class UserPatchTest {
-
     private final UserGenerator generator = new UserGenerator();
     private final UserClient client = new UserClient();
-    private final UserAssertions check = new UserAssertions();
+    private final Assertions check = new Assertions();
+
     private String accessToken;
 
     @After
-    public void deleteCourier() {
+    public void deleteUser() {
         if (accessToken!=null) {
             Response response = client.deleteUser(accessToken);
             check.deletedSuccessfully(response);
@@ -28,7 +28,7 @@ public class UserPatchTest {
     public void updateAuthorizedUser(){
         var user = generator.random();
         Response creationResponse = client.createUser(user);
-        check.createdSuccessfully(creationResponse);
+        check.userCreatedSuccessfully(creationResponse);
         this.accessToken = creationResponse.path("accessToken");
 
         var newUser = generator.newCredentials();
@@ -42,12 +42,12 @@ public class UserPatchTest {
     public void updateUnauthorizedUser(){
         var user = generator.random();
         Response creationResponse = client.createUser(user);
-        check.createdSuccessfully(creationResponse);
+        check.userCreatedSuccessfully(creationResponse);
         this.accessToken = creationResponse.path("accessToken");
 
         var newUser = generator.newCredentials();
-        Response updationResponse = client.updateUnauthUser(newUser);
-        check.patchWithoutAuth(updationResponse);
+        Response updationResponse = client.updateUnauthorizedUser(newUser);
+        check.patchUnauthorized(updationResponse);
     }
 
     @Test
@@ -56,12 +56,12 @@ public class UserPatchTest {
     public void updateWithExistingInfo(){
         var user = generator.random();
         Response creationResponse = client.createUser(user);
-        check.createdSuccessfully(creationResponse);
+        check.userCreatedSuccessfully(creationResponse);
         this.accessToken = creationResponse.path("accessToken");
 
         var newData = generator.repeats();
         Response updationResponse = client.updateUser(newData, accessToken);
-        check.patchedEmailExist(updationResponse);
+        check.patchForbidden(updationResponse);
     }
 }
 

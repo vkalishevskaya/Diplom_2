@@ -1,24 +1,24 @@
 import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.Response;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.example.Assertions;
 import org.example.Credentials;
-import org.example.UserAssertions;
 import org.example.UserClient;
 import org.example.UserGenerator;
 import org.junit.After;
 import org.junit.Test;
 import java.util.Map;
 
-
-
 public class UserLoginTest {
     private final UserGenerator generator = new UserGenerator();
     private final UserClient client = new UserClient();
-    private final UserAssertions check = new UserAssertions();
+    private final Assertions check = new Assertions();
+
     private String accessToken;
 
     @After
-    public void deleteCourier() {
+    public void deleteUser() {
         if (accessToken!=null) {
             Response response = client.deleteUser(accessToken);
             check.deletedSuccessfully(response);
@@ -31,7 +31,7 @@ public class UserLoginTest {
     public void userLogin() {
         var user = generator.random();
         Response creationResponse = client.createUser(user);
-        check.createdSuccessfully(creationResponse);
+        check.userCreatedSuccessfully(creationResponse);
 
         Credentials creds = Credentials.from(user);
         Response loginResponse = client.login(creds);
@@ -53,8 +53,9 @@ public class UserLoginTest {
     @Test
     @DisplayName("login fails response")
     @Description("Login without email")
-    public void loginFails() {
-        Response loginResponse = client.login(Map.of("password", "null"));
+    public void loginWithoutEmail() {
+        var password = RandomStringUtils.randomAlphanumeric(5);
+        Response loginResponse = client.login(Map.of("password", password));
         check.notFound(loginResponse);
         this.accessToken = loginResponse.path("accessToken");
     }
@@ -63,7 +64,8 @@ public class UserLoginTest {
     @DisplayName("login without password field")
     @Description("Login without password")
     public void loginWithoutPassword() {
-        Response loginResponse = client.login(Map.of("email", "email"));
+        var email= RandomStringUtils.randomAlphanumeric(5)+"@sparrow.com";
+        Response loginResponse = client.login(Map.of("email", email));
         check.notFound(loginResponse);
         this.accessToken = loginResponse.path("accessToken");
     }

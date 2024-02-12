@@ -21,4 +21,5 @@ public class UserGenerator {
     public User notExist() { return new User(RandomStringUtils.randomAlphanumeric(10).toLowerCase(Locale.ROOT)+"@sparrow.com", RandomStringUtils.randomAlphanumeric(10), RandomStringUtils.randomAlphanumeric(10));}
     @Step("Creating user with unique data")
     public User newCredentials() { return new User(RandomStringUtils.randomAlphanumeric(10).toLowerCase(Locale.ROOT)+"@sparrow.com", RandomStringUtils.randomAlphanumeric(10), RandomStringUtils.randomAlphanumeric(10));}
+
 }

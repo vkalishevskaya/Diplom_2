@@ -1,7 +1,7 @@
 import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.Response;
-import org.example.UserAssertions;
+import org.example.Assertions;
 import org.example.UserClient;
 import org.example.UserGenerator;
 import org.junit.After;
@@ -10,7 +10,7 @@ import org.junit.Test;
 public class UserCreationTest {
     private final UserGenerator generator = new UserGenerator();
     private final UserClient client = new UserClient();
-    private final UserAssertions check = new UserAssertions();
+    private final Assertions check = new Assertions();
 
     private String accessToken;
 
@@ -29,7 +29,7 @@ public class UserCreationTest {
     public void userCreate() {
         var user = generator.random();
         Response creationResponse = client.createUser(user);
-        check.createdSuccessfully(creationResponse);
+        check.userCreatedSuccessfully(creationResponse);
         this.accessToken = creationResponse.path("accessToken");
     }
 
@@ -49,9 +49,8 @@ public class UserCreationTest {
     public void creationFails() {
         var user = generator.noPassword();
         Response creationResponse = client.createUser(user);
-        String message = check.creationFailed(creationResponse);
+        check.creationFailed(creationResponse);
         this.accessToken = creationResponse.path("accessToken");
-        assert !message.isBlank();
     }
 
     @Test

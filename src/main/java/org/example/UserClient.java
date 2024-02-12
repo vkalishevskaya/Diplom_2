@@ -1,9 +1,7 @@
 package org.example;
 import io.qameta.allure.Step;
 import io.restassured.response.Response;
-import io.restassured.response.ValidatableResponse;
 import java.util.Map;
-import static io.restassured.RestAssured.given;
 
 public class UserClient extends Client {
     static final String LOGIN_PATH = "/auth/login";
@@ -45,7 +43,7 @@ public class UserClient extends Client {
                 .patch(PATCH_PATH);
     }
     @Step("Send PATCH request to /api/auth/user")
-    public Response updateUnauthUser(User user){
+    public Response updateUnauthorizedUser(User user){
         return spec()
                 .body(user)
                 .when()
